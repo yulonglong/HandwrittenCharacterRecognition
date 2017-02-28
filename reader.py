@@ -65,4 +65,4 @@ def read_dataset(train_path, mode='training'):
             y.append(class_mapping[curr_instance.y])
 
     logger.info("Class mapping size %d", len(class_mapping))
-    return training_instances, np.array(x), np.array(y)
+    return training_instances, x, y

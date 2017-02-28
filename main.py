@@ -41,7 +41,7 @@ def getFold(fold, x, y):
 			train_x.append(x[i])
 			train_y.append(y[i])
 
-	return train_x, train_y, test_x, test_y
+	return np.array(train_x), np.array(train_y), np.array(test_x), np.array(test_y)
 
 # all the arrays have to be numpy array before passing them into this function
 def do_logistic_regression(x, y, class_weight=None):
@@ -58,10 +58,10 @@ def do_logistic_regression(x, y, class_weight=None):
 	for i in range(10):
 		train_x, train_y, test_x, test_y = getFold(i,x,y)
 		logger.info("Fold %d" % i)
-		logger.info("train_x.shape : ", train_x.shape)
-		logger.info("train_y.shape : ", train_y.shape)
-		logger.info("test_x.shape : ", test_x.shape)
-		logger.info("test_y.shape : ", test_y.shape)
+		logger.info("train_x.shape : " + str(train_x.shape))
+		logger.info("train_y.shape : " + str(train_y.shape))
+		logger.info("test_x.shape  : " + str(test_x.shape))
+		logger.info("test_y.shape  : " + str(test_y.shape))
 
 		logger.info("Start training...")
 		# logreg = linear_model.LogisticRegression(class_weight=class_weight).fit(train_x, train_y)
