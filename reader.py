@@ -59,8 +59,10 @@ def read_dataset(train_path, mode='training'):
                     class_mapping_index += 1
             
             training_instances.append(curr_instance)
-
-            x.append(list(float(xx) for xx in curr_instance.x))
+            
+            curr_x = list(float(xx) for xx in curr_instance.x)
+            curr_x.append(float(curr_instance.position))
+            x.append(curr_x)
             y.append(class_mapping[curr_instance.y])
 
     logger.info("Class mapping size %d", len(class_mapping))
