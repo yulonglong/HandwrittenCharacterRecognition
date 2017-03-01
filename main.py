@@ -22,6 +22,7 @@ parser.add_argument("-t", "--model-type", dest="model_type", type=str, metavar='
 parser.add_argument("-o", "--out", dest="out_dir_path", type=str, metavar='<str>', required=True, help="The output folder")
 
 args = parser.parse_args()
+model_type = args.model_type
 
 out_dir = args.out_dir_path
 out_dir = out_dir + "-" + model_type
