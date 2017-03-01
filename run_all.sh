@@ -18,8 +18,8 @@ python main.py -tr data/train.csv -o output -t LogisticRegressionCV
 python main.py -tr data/train.csv -o output -t MultiTaskLasso
 python main.py -tr data/train.csv -o output -t MultiTaskLassoCV
 python main.py -tr data/train.csv -o output -t MultiTaskElasticNetCV
-python main.py -tr data/train.csv -o output -t OrthongonalMatchingPursuit
-python main.py -tr data/train.csv -o output -t OrthongonalMatchingPursuitCV
+python main.py -tr data/train.csv -o output -t OrthogonalMatchingPursuit
+python main.py -tr data/train.csv -o output -t OrthogonalMatchingPursuitCV
 python main.py -tr data/train.csv -o output -t PassiveAggressiveClassifier
 python main.py -tr data/train.csv -o output -t PassiveAggressiveRegressor
 python main.py -tr data/train.csv -o output -t Perceptron

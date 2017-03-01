@@ -104,10 +104,10 @@ def do_logistic_regression(x, y, class_weight=None):
 			model = linear_model.MultiTaskLassoCV().fit(train_x, train_y)
 		elif model_type == 'MultiTaskElasticNetCV':
 			model = linear_model.MultiTaskElasticNetCV().fit(train_x, train_y)
-		elif model_type == 'OrthongonalMatchingPursuit':
-			model = linear_model.OrthongonalMatchingPursuit().fit(train_x, train_y)
-		elif model_type == 'OrthongonalMatchingPursuitCV':
-			model = linear_model.OrthongonalMatchingPursuitCV().fit(train_x, train_y)
+		elif model_type == 'OrthogonalMatchingPursuit':
+			model = linear_model.OrthogonalMatchingPursuit().fit(train_x, train_y)
+		elif model_type == 'OrthogonalMatchingPursuitCV':
+			model = linear_model.OrthogonalMatchingPursuitCV().fit(train_x, train_y)
 		elif model_type == 'PassiveAggressiveClassifier':
 			model = linear_model.PassiveAggressiveClassifier(class_weight=class_weight).fit(train_x, train_y)
 		elif model_type == 'PassiveAggressiveRegressor':
