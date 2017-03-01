@@ -2,7 +2,6 @@ from __future__ import print_function
 import random
 import codecs
 import sys
-import nltk
 import logging
 import re
 import glob
