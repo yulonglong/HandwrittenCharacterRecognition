@@ -34,19 +34,6 @@ U.print_args(args)
 train, x, y = R.read_dataset(args.train_path, mode='training')
 # test, test_x, test_y = R.read_dataset(args.test_path, mode='testing')
 
-def get_binary_predictions(pred, threshold=0.5):
-	'''
-	Convert [0,1] real number predictions to binary 1 or 0 predictions
-	Using 0.5 as its default threshold unless specified
-	'''
-	binary_pred = pred
-	high_indices = binary_pred >= threshold
-	binary_pred[high_indices] = 1
-	low_indices = binary_pred < threshold
-	binary_pred[low_indices] = 0
-
-	return binary_pred
-
 def getFold(fold, x, y):
 	train_x, train_y, test_x, test_y = [], [], [], []
 	for i in range(len(x)):
@@ -185,8 +172,8 @@ def do_logistic_regression(x, y, class_weight=None):
 		logger.info("Testing time : %d seconds" % testTime)
 		totalTime += trainTime + testTime
 
-		train_pred_y = get_binary_predictions(train_pred_y)
-		test_pred_y = get_binary_predictions(test_pred_y)
+		train_pred_y = np.round(train_pred_y)
+		test_pred_y = np.round(test_pred_y)
 
 		logger.info('[TRAIN] F1: %.3f, Recall: %.3f, Precision: %.3f' % (
 				f1_score(train_y,train_pred_y,average=score_average), recall_score(train_y,train_pred_y,average=score_average), precision_score(train_y,train_pred_y,average=score_average)))
