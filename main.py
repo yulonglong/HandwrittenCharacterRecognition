@@ -58,6 +58,8 @@ def do_logistic_regression(x, y, class_weight=None):
 
 	totalF1, totalRecall, totalPrecision = 0.0, 0.0, 0.0
 
+	totalTime = 0
+
 	for i in range(10):
 		train_x, train_y, test_x, test_y = getFold(i,x,y)
 		logger.info("Fold %d" % i)
@@ -66,6 +68,7 @@ def do_logistic_regression(x, y, class_weight=None):
 		logger.info("test_x.shape  : " + str(test_x.shape))
 		logger.info("test_y.shape  : " + str(test_y.shape))
 
+		startTrainTime = time()
 		logger.info("Start training...")
 		if model_type == 'ARDRegression':
 			model = linear_model.ARDRegression().fit(train_x, train_y)
@@ -153,6 +156,10 @@ def do_logistic_regression(x, y, class_weight=None):
 			model = svm.SVC(class_weight=class_weight, degree=3).fit(train_x, train_y)
 			
 		logger.info("Finished training.")
+		endTrainTime = time()
+		trainTime = endTrainTime - startTrainTime
+		logger.info("Training time : %d seconds" % trainTime)
+
 
 		logger.info("Start predicting train set...")
 		train_pred_y = model.predict(train_x)
@@ -160,6 +167,10 @@ def do_logistic_regression(x, y, class_weight=None):
 		logger.info("Start predicting test set...")
 		test_pred_y = model.predict(test_x)
 		logger.info("Finished predicting test set.")
+		endTestTime = time()
+		testTime = endTestTime - endTrainTime
+		logger.info("Testing time : %d seconds" % testTime)
+		totalTime += trainTime + testTime
 
 		logger.info('[TRAIN] F1: %.3f, Recall: %.3f, Precision: %.3f' % (
 				f1_score(train_y,train_pred_y,average=score_average), recall_score(train_y,train_pred_y,average=score_average), precision_score(train_y,train_pred_y,average=score_average)))
@@ -173,5 +184,5 @@ def do_logistic_regression(x, y, class_weight=None):
 		logger.info("================================================")
 
 	logger.info('[AVERAGE OVERALL TEST]  F1: %.3f, Recall: %.3f, Precision: %.3f' % (totalF1/10.0, totalRecall/10.0, totalPrecision/10.0))
-
+	logger.info('Total time taken = %d seconds' % totalTime)
 do_logistic_regression(x, y, class_weight='balanced')
