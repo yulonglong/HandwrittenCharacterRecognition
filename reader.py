@@ -61,7 +61,17 @@ def read_dataset(train_path, mode='training'):
             training_instances.append(curr_instance)
             
             curr_x = list(float(xx) for xx in curr_instance.x)
-            curr_x.append(float(curr_instance.position))
+
+            # Add additional 128 features from the previous character
+            if float(curr_instance.position) > 1:
+                for xx in training_instances[-1].x:
+                    curr_x.append(float(xx))
+            else:
+                for i in range(128):
+                    curr_x.append(float(0))
+
+            curr_x.append(float(curr_instance.position)/20.0)
+            
             x.append(curr_x)
             y.append(class_mapping[curr_instance.y])
 
