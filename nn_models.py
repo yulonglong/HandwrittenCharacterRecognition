@@ -8,10 +8,10 @@ def create_model():
     from keras.models import Model
 
     #Create your own input format (here 3x200x200)
-    img_input = Input(shape=(16,8,1),name = 'image_input')
+    img_input = Input(shape=(1,16,8),name = 'image_input')
 
     # Block 1
-    x = Convolution2D(64, 3, 3, activation='relu', border_mode='same', name='block1_conv1', input_shape=(16,8,1))(img_input)
+    x = Convolution2D(64, 3, 3, activation='relu', border_mode='same', name='block1_conv1', input_shape=(1,16,8))(img_input)
     x = Convolution2D(64, 3, 3, activation='relu', border_mode='same', name='block1_conv2')(x)
     # x = MaxPooling2D((2, 2), strides  =(2, 2), name='block1_pool')(x)
 

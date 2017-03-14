@@ -28,13 +28,14 @@ class Alpha():
     def get_2D_x(self, x):
         new_x = []
         counter = 0
+        new_x_i = []
         for i in range(16):
             new_x_j = []
             for j in range(8):
-                new_x_j_k = [ float(x[counter]) ]
-                new_x_j.append(new_x_j_k)
+                new_x_j.append( float(x[counter]) )
                 counter += 1
-            new_x.append(new_x_j)
+            new_x_i.append(new_x_j)
+        new_x.append(new_x_i)
         return new_x
         
     def print_letter(self):
