@@ -42,11 +42,13 @@ train, x, y = R.read_dataset(args.train_path, model=model_type)
 
 def getFold(fold, x, y):
     train_x, train_y, dev_x, dev_y, test_x, test_y = [], [], [], [], [], []
+    validation_fold = fold+1
+    if validation_fold > 9: validation_fold = 0
     for i in range(len(x)):
         if i%10 == fold:
             test_x.append(x[i])
             test_y.append(y[i])
-        elif i%10 == fold+1:
+        elif i%10 == validation_fold:
             dev_x.append(x[i])
             dev_y.append(y[i])
         else:
