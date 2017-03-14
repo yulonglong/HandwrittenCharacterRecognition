@@ -13,12 +13,12 @@ def create_model():
     # Block 1
     x = Convolution2D(64, 3, 3, activation='relu', border_mode='same', name='block1_conv1', input_shape=(1,16,8))(img_input)
     x = Convolution2D(64, 3, 3, activation='relu', border_mode='same', name='block1_conv2')(x)
-    # x = MaxPooling2D((2, 2), strides  =(2, 2), name='block1_pool')(x)
+    x = MaxPooling2D((2, 2), strides  =(2, 2), name='block1_pool')(x)
 
     # Block 2
-    # x = Convolution2D(128, 3, 3, activation='relu', border_mode='same', name='block2_conv1')(x)
-    # x = Convolution2D(128, 3, 3, activation='relu', border_mode='same', name='block2_conv2')(x)
-    # x = MaxPooling2D((2, 2), strides=(2, 2), name='block2_pool')(x)
+    x = Convolution2D(128, 3, 3, activation='relu', border_mode='same', name='block2_conv1')(x)
+    x = Convolution2D(128, 3, 3, activation='relu', border_mode='same', name='block2_conv2')(x)
+    x = MaxPooling2D((2, 2), strides=(2, 2), name='block2_pool')(x)
 
     # # Block 3
     # x = Convolution2D(256, 3, 3, activation='relu', border_mode='same', name='block3_conv1')(x)
