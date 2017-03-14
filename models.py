@@ -15,22 +15,24 @@ from sklearn.metrics import accuracy_score
 
 logger = logging.getLogger(__name__)
 
-def run_model(train_x, train_y, test_x, test_y, model_type, args, out_dir=None, class_weight=None):
+def run_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, args, out_dir=None, class_weight=None):
+    logger.info("train_x.shape : " + str(train_x.shape))
+    logger.info("train_y.shape : " + str(train_y.shape))
+    logger.info("dev_x.shape : " + str(dev_x.shape))
+    logger.info("dev_y.shape : " + str(dev_y.shape))
+    logger.info("test_x.shape  : " + str(test_x.shape))
+    logger.info("test_y.shape  : " + str(test_y.shape))
+
     if model_type == 'nn':
-        return run_nn_model(train_x, train_y, test_x, test_y, model_type, args, out_dir=out_dir, class_weight=class_weight)
+        return run_nn_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, args, out_dir=out_dir, class_weight=class_weight)
     else:
-        return run_simple_model(train_x, train_y, test_x, test_y, model_type, out_dir=out_dir, class_weight=class_weight)
+        return run_simple_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, out_dir=out_dir, class_weight=class_weight)
 
 # all the arrays have to be numpy array before passing them into this function
-def run_simple_model(train_x, train_y, test_x, test_y, model_type, out_dir=None, class_weight=None):
+def run_simple_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, out_dir=None, class_weight=None):
     from sklearn import datasets, neighbors, linear_model, svm
 
     totalTime = 0
-
-    logger.info("train_x.shape : " + str(train_x.shape))
-    logger.info("train_y.shape : " + str(train_y.shape))
-    logger.info("test_x.shape  : " + str(test_x.shape))
-    logger.info("test_y.shape  : " + str(test_y.shape))
 
     startTrainTime = time()
     logger.info("Start training...")
@@ -147,9 +149,10 @@ def run_simple_model(train_x, train_y, test_x, test_y, model_type, out_dir=None,
 
     return accuracy_score(test_y, test_pred_y)
 
-def run_nn_model(train_x, train_y, test_x, test_y, model_type, args, out_dir=None, class_weight=None):
+def run_nn_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, args, out_dir=None, class_weight=None):
     import keras.utils.np_utils as np_utils
     train_y_multi = np_utils.to_categorical(train_y, 26)
+    dev_y_multi = np_utils.to_categorical(dev_y, 26)
     test_y_multi = np_utils.to_categorical(test_y, 26)
 
     import keras.optimizers as opt
@@ -173,7 +176,7 @@ def run_nn_model(train_x, train_y, test_x, test_y, model_type, args, out_dir=Non
     evl = Evaluator(
         out_dir,
         (train_x, train_y, train_y_multi),
-        (test_x, test_y, test_y_multi), ### WARNING PLEASE CHANGE THIS TO PROPER DEV SET
+        (dev_x, dev_y, dev_y_multi), ### WARNING PLEASE CHANGE THIS TO PROPER DEV SET
         (test_x, test_y, test_y_multi)
     )
 

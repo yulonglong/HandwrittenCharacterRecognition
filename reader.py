@@ -31,7 +31,7 @@ class Alpha():
         for i in range(16):
             new_x_j = []
             for j in range(8):
-                new_x_j_k = [ float(x[counter]), float(x[counter]), float(x[counter]) ]
+                new_x_j_k = [ float(x[counter]) ]
                 new_x_j.append(new_x_j_k)
                 counter += 1
             new_x.append(new_x_j)
