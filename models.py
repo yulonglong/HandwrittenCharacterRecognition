@@ -199,7 +199,7 @@ def run_nn_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, arg
 
         # Evaluate
         t0 = time()
-        evl.evaluate(model, ii)
+        best_acc = evl.evaluate(model, ii)
         evl_time = time() - t0
         total_eval_time += evl_time
 
@@ -209,4 +209,4 @@ def run_nn_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, arg
         # Print and send email Epoch LSTM
         content = evl.print_info()
 
-    return 0
+    return best_acc

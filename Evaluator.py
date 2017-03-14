@@ -151,6 +151,8 @@ class Evaluator():
         if (self.test_accuracy > self.best_test_missed):
             self.best_test_missed = self.test_accuracy
             self.best_test_missed_epoch = epoch
+            
+        return self.best_test
 
     def get_current_count(self):
         return self.dev_correct, len(self.dev_y_multi), self.test_correct, len(self.test_y_multi)
