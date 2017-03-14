@@ -18,7 +18,24 @@ class Alpha():
         self.y = y
         self.nextId = nextId
         self.position = position
-        self.x = x
+        self.x = self.get_x(x)
+        self.x2D = self.get_2D_x(x)
+
+    def get_x(self, x):
+        curr_x = list(float(xx) for xx in x)
+        return curr_x
+
+    def get_2D_x(self, x):
+        new_x = []
+        counter = 0
+        for i in range(16):
+            new_x_j = []
+            for j in range(8):
+                new_x_j_k = [ float(x[counter]), float(x[counter]), float(x[counter]) ]
+                new_x_j.append(new_x_j_k)
+                counter += 1
+            new_x.append(new_x_j)
+        return new_x
         
     def print_letter(self):
         counter = 0
@@ -34,7 +51,7 @@ class Alpha():
 
 class_mapping = dict()
         
-def read_dataset(train_path, mode='training'):
+def read_dataset(train_path, model='default'):
     training_instances = []
     x = []
     y = []
@@ -49,31 +66,13 @@ def read_dataset(train_path, mode='training'):
             tokens = re.split(',', line.rstrip())
             curr_instance = Alpha(tokens[0], tokens[1], tokens[2], tokens[3], tokens[4:])
             
-            # logger.info(curr_instance.y)
-            # curr_instance.print_letter()
-            # logger.info(list(ord(x) for x in curr_instance.y )[0] - 97)
-
-            if mode == 'training':
-                if not curr_instance.y in class_mapping:
-                    class_mapping[curr_instance.y] = class_mapping_index
-                    class_mapping_index += 1
-            
             training_instances.append(curr_instance)
-            
-            curr_x = list(float(xx) for xx in curr_instance.x)
 
-            # Add additional 128 features from the previous character
-            if float(curr_instance.position) > 1:
-                for xx in training_instances[-1].x:
-                    curr_x.append(float(xx))
+            if model == 'nn':
+                x.append(curr_instance.x2D)
             else:
-                for i in range(128):
-                    curr_x.append(float(0))
+                x.append(curr_instance.x)
+                
+            y.append(ord(curr_instance.y)-97)
 
-            curr_x.append(float(curr_instance.position)/20.0)
-            
-            x.append(curr_x)
-            y.append(class_mapping[curr_instance.y])
-
-    logger.info("Class mapping size %d", len(class_mapping))
     return training_instances, x, y

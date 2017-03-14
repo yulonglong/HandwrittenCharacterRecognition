@@ -11,18 +11,19 @@ import re # regex
 import copy
 from time import time
 
+from sklearn.metrics import accuracy_score
+
 logger = logging.getLogger(__name__)
 
+def run_model(train_x, train_y, test_x, test_y, model_type, args, out_dir=None, class_weight=None):
+    if model_type == 'nn':
+        return run_nn_model(train_x, train_y, test_x, test_y, model_type, args, out_dir=out_dir, class_weight=class_weight)
+    else:
+        return run_simple_model(train_x, train_y, test_x, test_y, model_type, out_dir=out_dir, class_weight=class_weight)
 
 # all the arrays have to be numpy array before passing them into this function
-def run_model(train_x, train_y, test_x, test_y, model_type, class_weight=None):
+def run_simple_model(train_x, train_y, test_x, test_y, model_type, out_dir=None, class_weight=None):
     from sklearn import datasets, neighbors, linear_model, svm
-    from sklearn.metrics import accuracy_score
-    from sklearn.metrics import recall_score
-    from sklearn.metrics import precision_score
-    from sklearn.metrics import f1_score
-
-    score_average = 'micro'
 
     totalTime = 0
 
@@ -141,11 +142,68 @@ def run_model(train_x, train_y, test_x, test_y, model_type, class_weight=None):
     train_pred_y = np.round(train_pred_y)
     test_pred_y = np.round(test_pred_y)
 
-    logger.info('[TRAIN] F1: %.3f, Recall: %.3f, Precision: %.3f' % (
-            f1_score(train_y,train_pred_y,average=score_average), recall_score(train_y,train_pred_y,average=score_average), precision_score(train_y,train_pred_y,average=score_average)))
-    logger.info('[TEST]  F1: %.3f, Recall: %.3f, Precision: %.3f' % (
-            f1_score(test_y,test_pred_y,average=score_average), recall_score(test_y,test_pred_y,average=score_average), precision_score(test_y,test_pred_y,average=score_average)))
+    logger.info('[TRAIN] Acc: %.3f' % (accuracy_score(train_y, train_pred_y)))
+    logger.info('[TEST]  Acc: %.3f' % (accuracy_score(test_y, test_pred_y)))
+
+    return accuracy_score(test_y, test_pred_y)
+
+def run_nn_model(train_x, train_y, test_x, test_y, model_type, args, out_dir=None, class_weight=None):
+    import keras.utils.np_utils as np_utils
+    train_y_multi = np_utils.to_categorical(train_y, 26)
+    test_y_multi = np_utils.to_categorical(test_y, 26)
+
+    import keras.optimizers as opt
+    clipvalue = 0
+    clipnorm = 10
+    optimizer = opt.RMSprop(lr=0.001, rho=0.9, epsilon=1e-06, clipnorm=clipnorm, clipvalue=clipvalue)
+    loss = 'categorical_crossentropy'
+    metric = 'accuracy'
+
+    from nn_models import create_model
+    model = create_model()
+    model.compile(loss=loss, optimizer=optimizer, metrics=[metric])
+    logger.info('model compilation completed!')
 
 
-    return f1_score(test_y,test_pred_y,average=score_average), recall_score(test_y,test_pred_y,average=score_average), precision_score(test_y,test_pred_y,average=score_average)
+    ###############################################################################################################################
+    ## Training
+    #
+    from Evaluator import Evaluator
 
+    evl = Evaluator(
+        out_dir,
+        (train_x, train_y, train_y_multi),
+        (test_x, test_y, test_y_multi), ### WARNING PLEASE CHANGE THIS TO PROPER DEV SET
+        (test_x, test_y, test_y_multi)
+    )
+
+    logger.info('---------------------------------------------------------------------------------------')
+    logger.info('Initial Evaluation:')
+    evl.evaluate(model, -1)
+
+    # Print and send email Init LSTM
+    content = evl.print_info()
+
+    total_train_time = 0
+    total_eval_time = 0
+
+    for ii in range(args.epochs):
+
+        t0 = time()
+        history = model.fit(train_x, train_y_multi, batch_size=32, nb_epoch=1, verbose=0)
+        tr_time = time() - t0
+        total_train_time += tr_time
+
+        # Evaluate
+        t0 = time()
+        evl.evaluate(model, ii)
+        evl_time = time() - t0
+        total_eval_time += evl_time
+
+        logger.info('Epoch %d, train: %is (%.1fm), evaluation: %is (%.1fm)' % (ii, tr_time, tr_time/60.0, evl_time, evl_time/60.0))
+        logger.info('[Train] loss: %.4f , metric: %.4f' % (history.history['loss'][0], history.history['acc'][0]))
+
+        # Print and send email Epoch LSTM
+        content = evl.print_info()
+
+    return 0
