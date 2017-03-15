@@ -7,6 +7,7 @@ import re
 import glob
 import numpy as np
 import pickle as pk
+import helper as H
 import re # regex
 import copy
 from time import time
@@ -190,6 +191,10 @@ def run_nn_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, arg
     dev_y_multi = np_utils.to_categorical(dev_y, 26)
     test_y_multi = np_utils.to_categorical(test_y, 26)
 
+    ############################################################################################
+    ## Set optimizers and compile model
+    #
+
     import keras.optimizers as opt
     clipvalue = 0
     clipnorm = 10
@@ -244,4 +249,3 @@ def run_nn_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, arg
         content = evl.print_info()
 
     return best_acc
-    

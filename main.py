@@ -4,6 +4,7 @@ import logging
 import numpy as np
 import sys
 import utils as U
+import helper as H
 import reader as R
 import models as M
 import pickle as pk
@@ -40,28 +41,11 @@ U.print_args(args)
 train, x, y = R.read_dataset(args.train_path, model=model_type)
 # test, test_x, test_y = R.read_dataset(args.test_path)
 
-def getFold(fold, x, y):
-    train_x, train_y, dev_x, dev_y, test_x, test_y = [], [], [], [], [], []
-    validation_fold = fold+1
-    if validation_fold > 9: validation_fold = 0
-    for i in range(len(x)):
-        if i%10 == fold:
-            test_x.append(x[i])
-            test_y.append(y[i])
-        elif i%10 == validation_fold:
-            dev_x.append(x[i])
-            dev_y.append(y[i])
-        else:
-            train_x.append(x[i])
-            train_y.append(y[i])
-
-    return np.array(train_x), np.array(train_y), np.array(dev_x), np.array(dev_y), np.array(test_x), np.array(test_y)
-
 totalAccuracy = 0.0
 
 for i in range(10):
-    train_x, train_y, dev_x, dev_y, test_x, test_y = getFold(i,x,y)
-    logger.info(" === Fold %i ===" % i)
+    train_x, train_y, dev_x, dev_y, test_x, test_y = H.getFoldDrawCards(i,x,y)
+    logger.info("================ Fold %i ================" % i)
     accuracy = M.run_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, args, out_dir=out_dir, class_weight='balanced')
     totalAccuracy += accuracy
 
