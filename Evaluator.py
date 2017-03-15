@@ -38,18 +38,17 @@ class Evaluator():
     
     def dump_ref_scores(self):
         U.mkdir_p(self.out_dir + '/preds/')
-        np.savetxt(self.out_dir + '/preds/' + '/dev_ref.' + '.txt', self.dev_y_org, fmt='%i')
-        np.savetxt(self.out_dir + '/preds/' + '/test_ref.' + '.txt', self.test_y_org, fmt='%i')
+        np.savetxt(self.out_dir + '/preds/' + '/dev_ref' + '.txt', self.dev_y_org, fmt='%i')
+        np.savetxt(self.out_dir + '/preds/' + '/test_ref' + '.txt', self.test_y_org, fmt='%i')
     
     def dump_predictions(self, dev_pred, test_pred, epoch):
         U.mkdir_p(self.out_dir + '/preds/' + '/' + str(epoch))
-        np.savetxt(self.out_dir + '/preds/' + '/' + str(epoch) + '/dev_pred_' + str(epoch) + '.' + '.txt', dev_pred, fmt='%.8f')
-        np.savetxt(self.out_dir + '/preds/' + '/' + str(epoch) + '/test_pred_' + str(epoch) + '.' + '.txt', test_pred, fmt='%.8f')
+        np.savetxt(self.out_dir + '/preds/' + '/' + str(epoch) + '/dev_pred_' + str(epoch) + '.txt', dev_pred, fmt='%.8f')
+        np.savetxt(self.out_dir + '/preds/' + '/' + str(epoch) + '/test_pred_' + str(epoch) + '.txt', test_pred, fmt='%.8f')
 
     def dump_best_predictions(self, dev_pred, test_pred):
-        U.mkdir_p(self.out_dir + '/preds/' + '/best')
-        np.savetxt(self.out_dir + '/preds/' + '/best/best_dev_pred.' + '.txt', dev_pred, fmt='%i')
-        np.savetxt(self.out_dir + '/preds/' + '/best/best_test_pred.' + '.txt', test_pred, fmt='%i')
+        np.savetxt(self.out_dir + '/preds/best_dev_pred' + '.txt', dev_pred, fmt='%i')
+        np.savetxt(self.out_dir + '/preds/best_test_pred' + '.txt', test_pred, fmt='%i')
     
     def process_predictions(self):
         train_pred = np.zeros(len(self.train_pred))
@@ -112,9 +111,9 @@ class Evaluator():
         return (train_correct, dev_correct, test_correct)
 
     def evaluate_from_best_file(self):
-        train_pred = np.loadtxt(self.out_dir + '/preds/' + '/best/best_train_pred.' + '.txt')
-        dev_pred = np.loadtxt(self.out_dir + '/preds/' + '/best/best_dev_pred.' + '.txt')
-        test_pred = np.loadtxt(self.out_dir + '/preds/' + '/best/best_test_pred.' + '.txt')
+        train_pred = np.loadtxt(self.out_dir + '/preds/best_train_pred' + '.txt')
+        dev_pred = np.loadtxt(self.out_dir + '/preds/best_dev_pred' + '.txt')
+        test_pred = np.loadtxt(self.out_dir + '/preds/best_test_pred' + '.txt')
 
         (self.train_correct, self.dev_correct, self.test_correct) = self.get_correct_count(train_pred, dev_pred, test_pred)
         self.train_accuracy = float(self.train_correct)/float(len(self.train_y_multi))
@@ -128,8 +127,6 @@ class Evaluator():
         self.train_pred = model.predict(self.train_x, batch_size=self.batch_size_eval)
         self.dev_pred = model.predict(self.dev_x, batch_size=self.batch_size_eval)
         self.test_pred = model.predict(self.test_x, batch_size=self.batch_size_eval)
-
-        self.dump_predictions(self.dev_pred, self.test_pred, epoch)
 
         new_train_pred, new_dev_pred, new_test_pred = self.process_predictions()
 
@@ -145,7 +142,7 @@ class Evaluator():
             self.best_dev_correct = self.dev_correct
             self.best_test_correct = self.test_correct
             self.best_dev_epoch = epoch
-            model.save_weights(self.out_dir + '/models/best_weights/best_model_weights.' + '.h5', overwrite=True)
+            model.save_weights(self.out_dir + '/models/best_weights/best_model_weights' + '.h5', overwrite=True)
             self.dump_best_predictions(new_dev_pred, new_test_pred)
 
         if (self.test_accuracy > self.best_test_missed):
