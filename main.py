@@ -54,7 +54,7 @@ if args.is_test and args.test_path:
 
     train_x, train_y, dev_x, dev_y = H.getDevFoldDrawCards(x,y)
     logger.info("================ Testing ================")
-    # accuracy = M.run_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, args, out_dir=out_dir, class_weight='balanced')
+    accuracy = M.run_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, args, out_dir=out_dir, class_weight='balanced')
 
 
     ##########################################################33
