@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 def run_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, args, out_dir=None, class_weight=None):
     logger.info("train_x.shape : " + str(train_x.shape))
     logger.info("train_y.shape : " + str(train_y.shape))
-    logger.info("dev_x.shape : " + str(dev_x.shape))
-    logger.info("dev_y.shape : " + str(dev_y.shape))
+    logger.info("dev_x.shape   : " + str(dev_x.shape))
+    logger.info("dev_y.shape   : " + str(dev_y.shape))
     logger.info("test_x.shape  : " + str(test_x.shape))
     logger.info("test_y.shape  : " + str(test_y.shape))
 
@@ -149,6 +149,41 @@ def run_simple_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type,
 
     return accuracy_score(test_y, test_pred_y)
 
+
+####################################################################################################
+#### BEGIN SECTION FOR NEURAL NET
+##
+
+def create_nn_model():
+    from keras.layers import Input, Flatten, Dense, Dropout, Convolution2D, MaxPooling2D
+    from keras.models import Model
+
+    #Create your own input format (here 3x200x200)
+    img_input = Input(shape=(1,16,8), name='image_input')
+
+    # Block 1
+    x = Convolution2D(64, 3, 3, activation='relu', border_mode='same', name='block1_conv1', input_shape=(1,16,8))(img_input)
+    x = Convolution2D(64, 3, 3, activation='relu', border_mode='same', name='block1_conv2')(x)
+    x = MaxPooling2D((2, 2), strides=(2, 2), name='block1_pool')(x)
+    x = Dropout(0.5)(x)
+
+    # Block 2
+    x = Convolution2D(128, 3, 3, activation='relu', border_mode='same', name='block2_conv1')(x)
+    x = Convolution2D(128, 3, 3, activation='relu', border_mode='same', name='block2_conv2')(x)
+    x = MaxPooling2D((2, 2), strides=(2, 2), name='block2_pool')(x)
+    x = Dropout(0.5)(x)
+
+    # Classification block
+    x = Flatten(name='flatten')(x)
+    x = Dense(256, activation='relu', name='fc1')(x)
+    x = Dense(26, activation='softmax', name='predictions')(x)
+
+    my_model = Model(input=img_input, output=x)
+    my_model.summary()
+
+    return my_model
+
+
 def run_nn_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, args, out_dir=None, class_weight=None):
     import keras.utils.np_utils as np_utils
     train_y_multi = np_utils.to_categorical(train_y, 26)
@@ -162,15 +197,14 @@ def run_nn_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, arg
     loss = 'categorical_crossentropy'
     metric = 'accuracy'
 
-    from nn_models import create_model
-    model = create_model()
+    model = create_nn_model()
     model.compile(loss=loss, optimizer=optimizer, metrics=[metric])
     logger.info('model compilation completed!')
-
 
     ###############################################################################################################################
     ## Training
     #
+
     from Evaluator import Evaluator
 
     evl = Evaluator(
@@ -210,3 +244,4 @@ def run_nn_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, arg
         content = evl.print_info()
 
     return best_acc
+    
