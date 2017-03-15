@@ -54,8 +54,15 @@ if args.is_test and args.test_path:
 
     train_x, train_y, dev_x, dev_y = H.getDevFoldDrawCards(x,y)
     logger.info("================ Testing ================")
-    accuracy = M.run_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, args, out_dir=out_dir, class_weight='balanced')
+    # accuracy = M.run_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type, args, out_dir=out_dir, class_weight='balanced')
 
+
+    ##########################################################33
+    ## Start reading output for submissioin
+    #
+    
+    logger.info("Reading output and creating submission.csv file for kaggle...")
+    
     preds_y = []
     with codecs.open(out_dir + '/preds/best_test_pred.txt', mode='r', encoding='ISO-8859-1') as input_file:
         for line in input_file:
@@ -63,11 +70,28 @@ if args.is_test and args.test_path:
 
     assert len(preds_y) == len(test)
 
+    train_size = len(train)
+    test_size = len(test)
+    final_answer = [None] * (train_size + test_size + 1) # Id starts from 1, not 0
+    
+    for i in range(len(preds_y)):
+        final_answer[int(test[i].id)] = chr(preds_y[i]+97)
+    
+    for i in range(len(train)):
+        final_answer[int(train[i].id)] = train[i].y
+        
+    for i in range(len(final_answer)):
+        if i == 0: continue # Id starts from 1, not 0
+        assert final_answer[i] != None
+
     output = open(out_dir + '/preds/submission.csv' ,"w")
     output.write("Id,Prediction\n")
-    for i in range(len(preds_y)):
-        output.write(test[i].id + "," + chr(preds_y[i]+97) + "\n")
+    for i in range(len(final_answer)):
+        if i == 0: continue # Id starts from 1, not 0
+        output.write(str(i) + "," + final_answer[i] + "\n")
     output.close()
+    
+    logger.info("Done! Please submit 'data/preds/submission.csv' to kaggle!")
 
 # If it is to train
 else:
