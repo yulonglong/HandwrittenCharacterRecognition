@@ -145,6 +145,8 @@ def run_simple_model(train_x, train_y, dev_x, dev_y, test_x, test_y, model_type,
     train_pred_y = np.round(train_pred_y)
     test_pred_y = np.round(test_pred_y)
 
+    np.savetxt(out_dir + '/preds/best_test_pred' + '.txt', test_pred_y, fmt='%i')
+
     logger.info('[TRAIN] Acc: %.3f' % (accuracy_score(train_y, train_pred_y)))
     logger.info('[TEST]  Acc: %.3f' % (accuracy_score(test_y, test_pred_y)))
 
