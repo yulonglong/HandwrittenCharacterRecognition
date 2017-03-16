@@ -16,7 +16,7 @@ def getDevFoldDrawCards(x, y):
     train_x, train_y, dev_x, dev_y = [], [], [], []
 
     for i in range(len(x)):
-        if i%10 == 0:
+        if i%20 == 0:
             dev_x.append(x[i])
             dev_y.append(y[i])
         else:
