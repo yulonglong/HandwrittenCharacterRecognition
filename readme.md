@@ -3,6 +3,8 @@ Handwritten Character Recognition
 Given an 16 x 8 black and white image, the classifier is supposed to classify the image into 26 different classes (of lowercase alphabets)
 The best performing classifier is multi-layer CNN.  
 
+The repository is publicly available at https://github.com/yulonglong/HandwrittenCharacterRecognition  
+
 **Requirements and Environment:**  
 - Ubuntu 16.04  
 - Python 2.7.12  
